@@ -15,9 +15,9 @@ namespace BlobTriggerFunc
         public static async Task Run([BlobTrigger("testtask/{name}", Connection = "AzureWebJobsStorage")] Stream myBlob, string name, ILogger log)
         {
             
-            var storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=testreenbitstorage;AccountKey=yrM2jzrLoFWdxCR2NeAl4rPcSxNFe9OXi/WptXjVim4xenAF+qxJyopqBUNRlmRWIomtzVAoTJrm+AStNfefLQ==;EndpointSuffix=core.windows.net");
+            var storageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("BlobConnectionString"));
             var blobClient = storageAccount.CreateCloudBlobClient();
-            var container = blobClient.GetContainerReference("testtask");
+            var container = blobClient.GetContainerReference(Environment.GetEnvironmentVariable("BlobContainerName"));
             var blockBlob = container.GetBlockBlobReference(name);
             await blockBlob.FetchAttributesAsync();
             log.LogInformation($"C# Blob trigger function processed blob\nName: {name} \nEmail: {blockBlob.Metadata["email"]}");
